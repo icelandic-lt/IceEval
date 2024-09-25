@@ -1,0 +1,11 @@
+datasets
+diaparser
+evaluate
+requests
+rouge-score
+seqeval
+tokenizer
+torch==1.12.1+cu116
+transformers
+pytorch-lightning
+torch-optimizer
