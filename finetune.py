@@ -36,7 +36,6 @@ def finetune_pos(model_path, train_path, test_path, output_path, task, batch_siz
            'run_ner.py',
            '--task_name', task,
            '--model_name_or_path', model_path,
-           '--config_name', os.path.join(model_path, 'config.json'),
            '--tokenizer_name', model_path,
            '--output_dir', output_path,
            '--train_file', train_path,

@@ -4,8 +4,8 @@ evaluate
 requests
 rouge-score
 seqeval
-tokenizer
-torch==1.12.1+cu116
-transformers
-pytorch-lightning
+tokenizer~=2.0
+torch>=1.12.1+cu116,<2
+transformers[torch]
+pytorch-lightning>=1.4.4,<1.6.0
 torch-optimizer
