@@ -8,7 +8,7 @@ Each model evaluation has been run in `October/2024` on a single GPU card with s
 The given **rank is calculated by averaging all final scores** and is an orientation for the best performing all-rounders.<br>
 Missing values are from models currently under evaluation.
 
-| Model | License | Parameters | Model-Size | PoS | NER | DP | ATS | Rank |
+| Model | License | Parameters | Model-Size | PoS | NER | DP`*` | ATS | Rank |
 |-------|---------|------------|------------|-----|-----|----|----|------|
 | jonfd/convbert-base-igc-is | CC-BY-4.0 | 106.90 Mio | 407.78 MB | 97.71% | 91.52% | 79.84% | 69.09% | 2 |
 | jonfd/convbert-small-igc-is | CC-BY-4.0 | 21.52 Mio | 82.12 MB | 96.94% | 89.95% | 79.46% | 68.74% | 3 |
@@ -21,6 +21,8 @@ Missing values are from models currently under evaluation.
 | mideind/IceBERT | AGPLv3 | 124.44 Mio | 474.72 MB | 97.88% | 92.40% | 72.51% | 69.91% | 4 |
 | mideind/IceBERT-igc | AGPLv3 | 124.44 Mio | 474.72 MB | | | | | |
 | mideind/IceBERT-large | AGPLv3 | 355.09 Mio | 1354.56 MB | | | | | |
+
+`*` Note that results for DiaParser are significantly lower than expected, need investigation!
 
 Besides absolute scores for a specific use-case, please take also into account the license of the specific model and its size / number of model parameters.<br>
 The runtime is roughly anti-proportional to the model's parameter count.
