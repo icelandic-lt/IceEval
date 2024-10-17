@@ -1,11 +1,13 @@
+accelerate >= 0.12.0
 datasets
 diaparser
 evaluate
+numpy==1.25.2
 requests
 rouge-score
 seqeval
-tokenizer~=2.0
-torch>=1.12.1+cu116,<2
-transformers[torch]
+tokenizer==2.0
+torch >= 1.3,<2
+transformers[torch]>=4.45.0
 pytorch-lightning>=1.4.4,<1.6.0
 torch-optimizer
