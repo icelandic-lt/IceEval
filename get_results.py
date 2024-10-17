@@ -98,12 +98,16 @@ def main():
 
     print("All scores:")
     for task, task_results in results.items():
-        print(f"{task:>15}", " ".join([f"{score:>7.2%}" for run, score in task_results.items()]))
+        print(f"{task:>15}", " ".join([f"{score:>7.2%}" if score is not None else "   N/A " for run, score in task_results.items()]))
 
     print("\nAverages:")
     for task, task_results in results.items():
-        avg = sum(task_results.values()) / len(task_results.values())
-        print(f"{task:>15} {avg:>7.2%}")
+        valid_scores = [score for score in task_results.values() if score is not None]
+        if valid_scores:
+            avg = sum(valid_scores) / len(valid_scores)
+            print(f"{task:>15} {avg:>7.2%}")
+        else:
+            print(f"{task:>15}    N/A ")
 
 
 if __name__ == '__main__':

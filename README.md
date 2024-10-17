@@ -1,11 +1,11 @@
 # IceEval
 
-![Version](https://img.shields.io/badge/Version-22.09-darkviolet)
+![Version](https://img.shields.io/badge/Version-main-green)
 ![Python](https://img.shields.io/badge/python-3.9-blue?logo=python&logoColor=white)
 ![CI Status](https://img.shields.io/badge/CI-[unavailable]-red)
 ![Docker](https://img.shields.io/badge/Docker-[unavailable]-red)
 
-IceEval is a benchmark for evaluating and comparing the quality of pre-trained language models.
+IceEval is a benchmark for evaluating and comparing the quality of pre-trained language models (LM's).
 
 ## Overview
 - **Language:** Python
@@ -22,30 +22,32 @@ IceEval is a benchmark for evaluating and comparing the quality of pre-trained l
 
 ## Description
 
-IceEval is a benchmark for evaluating and comparing the quality of pre-trained
-language models. The models are evaluated on a selection of four NLP tasks for
-Icelandic: part-of-speech (PoS) tagging, named entity recognition (NER),
-dependency parsing (DP) and automatic text summarization (ATS). IceEval includes
-scripts for downloading the datasets, splitting them into training, validation
-and test splits and training and evaluating models for each task. The benchmark
-uses the Transformers, DiaParser and TransformerSum libraries for fine-tuning
-and evaluation.
+IceEval is foremost a benchmark for evaluating and comparing the quality of pre-trained language models. The models are evaluated on a selection of four NLP tasks for Icelandic: part-of-speech (PoS) tagging, named entity recognition (NER), dependency parsing (DP) and automatic text summarization (ATS).
 
-For PoS tagging, the models are evaluated on the MIM-GOLD corpus, and the
-benchmark reports tagging accuracy. For NER, the models are evaluated on the
-MIM-GOLD-NER corpus, and the benchmark reports F1 scores. For DP, the models are
-evaluated on the IcePaHC-UD corpus, and the benchmark reports labeled attachment
-scores (LAS). For ATS, the models are evaluated on the IceSum corpus, and the
-benchmark reports ROUGE-2 recall scores.
+But you can also use IceEval as a demonstration, how to fine-tune any of the evaluated LM's on specific token-classification tasks. We used the HuggingFace Transformers [Token-Classification example](https://github.com/huggingface/transformers/tree/main/examples/pytorch/token-classification) as our baseline.
 
-MIM-GOLD 21.05 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/114
-MIM-GOLD-NER 2.0 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/230
-IcePaHC-UD - https://github.com/UniversalDependencies/UD_Icelandic-IcePaHC/
-IceSum 22.09 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/285
+IceEval includes scripts for downloading the datasets, splitting them into training, validation and test splits and training and evaluating models for each task. The benchmark uses the Transformers, DiaParser and TransformerSum libraries for fine-tuning and evaluation.
 
-Transformers - https://github.com/huggingface/transformers
-DiaParser - https://github.com/Unipisa/diaparser
-TransformerSum - https://github.com/HHousen/TransformerSum
+For PoS tagging, the models are evaluated on the MIM-GOLD corpus, and the benchmark reports tagging accuracy.<br>
+For NER, the models are evaluated on the MIM-GOLD-NER corpus, and the benchmark reports F1 scores.<br>
+For DP, the models are evaluated on the IcePaHC-UD corpus, and the benchmark reports labeled attachment scores (LAS).<br>
+For ATS, the models are evaluated on the IceSum corpus, and the benchmark reports ROUGE-2 recall scores.
+
+MIM-GOLD 21.05 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/114<br>
+MIM-GOLD-NER 2.0 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/230<br>
+IcePaHC-UD - https://github.com/UniversalDependencies/UD_Icelandic-IcePaHC/<br>
+IceSum 22.09 - https://repository.clarin.is/repository/xmlui/handle/20.500.12537/285<br>
+
+Transformers - https://github.com/huggingface/transformers<br>
+DiaParser - https://github.com/Unipisa/diaparser<br>
+TransformerSum - https://github.com/HHousen/TransformerSum<br>
+
+**Note:**<br>
+The TransformerSum library uses a `ROUGE` package that isn't Unicode-friendly. This mimics the original `ROUGE` package for Perl which wasn't Unicode friendly either. When calculating `ROUGE` scores, first the GOLD and predicted summaries are pre-processed by discarding all non-alphanumeric characters using the regular expression `[^a-z0-9]+`. This would result in all accented characters being replaced by spaces, which leads to much lower `ROUGE` scores. In our bundled version of `TransformerSum`, this issue has been fixed. English-oriented stemming on the summaries is also fixed.
+
+## Results
+
+Evaluation results of many Icelandic language models (LMs) can be found in the [results](doc/results.md) section.
 
 ## Installation
 
@@ -69,10 +71,9 @@ Run the benchmark:
 python finetune.py --model_path <path_to_model> --model_type <model_type> --output_dir <output_dir>
 ```
 
-The `path_to_model` argument specifies the path to pretrained model or model
-identifier from huggingface.co/models. The model_type argument should identify
-the type of the model (e.g., 'bert', 'roberta' or 'electra'). The `output_dir`
-specifies the root directory where the checkpoints and results should be saved.
+The argument `--path_to_model` specifies the path to pretrained model or model identifier from huggingface.co/models. You can also use the syntax `<group>/<model>@<revision>` to specify a certain version on HuggingFace.<br>
+`--model_type` should identify the type of the model (e.g., 'bert', 'roberta' or 'electra').<br>
+`--output_dir` specifies the root directory where the checkpoints and results should be saved.
 
 Print results:
 
@@ -80,28 +81,20 @@ Print results:
 python get_results.py <root_dir>
 ```
 
-The `root_dir` argument specifies an output folder that was generated when
-running the benchmark with finetune.py.
+The `root_dir` argument specifies an output folder that was generated when running the benchmark with finetune.py. You can also run this script while the fine-tuning process is ongoing.
 
 ## License
 
 Copyright 2022 Reykjavik University
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"), see file [LICENSE](LICENSE) for exact terms;
 
-    http://www.apache.org/licenses/LICENSE-2.0
+- The included package [TransformerSum](https://github.com/HHousen/TransformerSum) is licensed under [GPLv3.0](https://github.com/HHousen/TransformerSum/blob/master/LICENSE).
+- The included package [DiaParser](https://github.com/Unipisa/diaparser) is licensed under [MIT](https://github.com/Unipisa/diaparser/blob/master/LICENSE).
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+The effective license of this package, taking into account all dependent package licenses is [GPLv3.0](https://github.com/HHousen/TransformerSum/blob/master/LICENSE). If you want to base your work on this project, but cannot comply with the terms of GPLv3, you must remove any code depending on `TransformerSum`. In that case, the effective license is Apache-2.0.
 
 ## Acknowledgements
 
-This project was funded by the Language Technology Programme for Icelandic
-2019-2023. The programme, which is managed and coordinated by
-[Almannarómur](https://almannaromur.is/), was funded by the Icelandic Ministry
-of Education, Science and Culture.
+This project was funded by the Language Technology Programme for Icelandic 2019-2023. The programme, which is managed and coordinated by
+[Almannarómur](https://almannaromur.is/), was funded by the Icelandic Ministry of Education, Science and Culture.
