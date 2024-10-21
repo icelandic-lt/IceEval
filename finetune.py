@@ -9,10 +9,18 @@ import subprocess
 import sys
 import logging
 
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 PYTHON = sys.executable
+
+def get_cuda_device():
+    cuda_devices = os.environ.get('CUDA_VISIBLE_DEVICES')
+    if cuda_devices is not None:
+        devices = cuda_devices.split(',')
+        if devices:
+            return devices[0]  # Return the first available device
+    return '0'  # Default to '0' if CUDA_VISIBLE_DEVICES is not set or empty
+
 
 def split_model_and_revision(model_path):
     match = re.match(r'(.*?)(?:@(.*))?$', model_path)
@@ -84,18 +92,19 @@ def finetune_dp(model_path, train_path, val_path, test_path, output_path, **kwar
     """
     if os.path.exists(output_path):
         if kwargs.get('force', False):
-            shutil.rmtree(output_path)
+            shutil.rmtree(output_path, ignore_errors=True)
         else:
             logging.info(f"Already exists: {output_path}")
             return
 
     model_name, revision = split_model_and_revision(model_path)
+    device = get_cuda_device()
     cmd = [PYTHON,
            '-X', 'utf8',
            '-m', 'diaparser.cmds.biaffine_dependency', 'train',
            '--epochs', str(kwargs.get('epochs')),
            '--build',
-           '--device', '0',
+           '--device', device,
            '--path', output_path,
            '--seed', str(kwargs.get('seed')),
            '--train', train_path,
@@ -174,8 +183,9 @@ def main():
     task_args = {
         'pos': {'epochs': 20, 'batch_size': 16, 'learning_rate': 5e-5, 'task': 'pos'},
         'ner': {'epochs': 10, 'batch_size': 16, 'learning_rate': 5e-5, 'task': 'ner'},
-        'dp': {'epochs': 5},
+        'dp': {'epochs': 15},
         'ats': {'epochs': 5, 'batch_size': 8, 'classifier': 'linear', 'pooling_mode': 'mean_tokens'}
+        # note: for ats, some models profit for setting epochs to a higher value, e.g. 10
     }
 
     model_path = args.model_path
