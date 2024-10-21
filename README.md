@@ -20,6 +20,11 @@ IceEval is a benchmark for evaluating and comparing the quality of pre-trained l
 - Operating System: Linux, e.g. Ubuntu
 - NVIDIA GPUs with CUDA support
 
+## Leaderboard
+
+On the **[Leaderboard](doc/results.md)** page, you can find current results of the most important Icelandic language models (LMs).
+
+
 ## Description
 
 IceEval is foremost a benchmark for evaluating and comparing the quality of pre-trained language models. The models are evaluated on a selection of four NLP tasks for Icelandic: part-of-speech (PoS) tagging, named entity recognition (NER), dependency parsing (DP) and automatic text summarization (ATS).
@@ -45,10 +50,6 @@ TransformerSum - https://github.com/HHousen/TransformerSum<br>
 **Note:**<br>
 The TransformerSum library uses a `ROUGE` package that isn't Unicode-friendly. This mimics the original `ROUGE` package for Perl which wasn't Unicode friendly either. When calculating `ROUGE` scores, first the GOLD and predicted summaries are pre-processed by discarding all non-alphanumeric characters using the regular expression `[^a-z0-9]+`. This would result in all accented characters being replaced by spaces, which leads to much lower `ROUGE` scores. In our bundled version of `TransformerSum`, this issue has been fixed. English-oriented stemming on the summaries is also fixed.
 
-## Results
-
-Evaluation results of many Icelandic language models (LMs) can be found in the [results](doc/results.md) section.
-
 ## Installation
 
 Install all required packages:
@@ -62,13 +63,13 @@ pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable
 Download and process the datasets:
 
 ``` shell
-python download_datasets.py
+python3 download_datasets.py
 ```
 
 Run the benchmark:
 
 ``` shell
-python finetune.py --model_path <path_to_model> --model_type <model_type> --output_dir <output_dir>
+python3 finetune.py --model_path <path_to_model> --model_type <model_type> --output_dir <output_dir>
 ```
 
 The argument `--path_to_model` specifies the path to pretrained model or model identifier from huggingface.co/models. You can also use the syntax `<group>/<model>@<revision>` to specify a certain version on HuggingFace.<br>
@@ -78,10 +79,25 @@ The argument `--path_to_model` specifies the path to pretrained model or model i
 Print results:
 
 ``` shell
-python get_results.py <root_dir>
+python3 get_results.py <root_dir>
 ```
 
 The `root_dir` argument specifies an output folder that was generated when running the benchmark with finetune.py. You can also run this script while the fine-tuning process is ongoing.
+
+Generate detailed results for PoS-Tagging:
+
+```bash
+python3 eval_pos.py --splits_dir <path-to-mim-gold> \
+          --results_dir <root_dir/pos> \
+          --output_dir <output_dir> \
+          --ignore_tags <space separated list of tags to be excluded from eval, e.g. B-x B-e> \
+          --confusion_matrix \
+          --full
+```
+
+This will generate results of the model as graphical confusion matrices of the top 30 mis-classifications and additional text files with more details inside a subfolder `confusions/` inside the given output directory.<br>
+If option `--full` is given, the full set of test data is used for evaluation, instead of just the part of the test data that fits into the max. input sequence of the model.<br>
+Optionally, parameter `--ignore_tags` can be used to specify a list of tags that should not be used for the evaluation. Note however, that the model still can predict these tags, and therefore you either need to train the model excluding these tags or need to modify the weights of these tags inside the classifier layer of the trained model to get the highest prediction accuracies. 
 
 ## License
 
